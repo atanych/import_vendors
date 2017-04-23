@@ -52,13 +52,13 @@ class Import
     def preset_vendor
       Post.new(
           post_author: 645,
-          post_date: Time.now,
-          post_date_gmt: Time.now - 2.hour,
+          post_date: Time.now + 2.hour,
+          post_date_gmt: Time.now,
           post_status: 'publish',
           comment_status: 'closed',
           ping_status: 'closed',
-          post_modified: Time.now,
-          post_modified_gmt: Time.now - 2.hour,
+          post_modified: Time.now + 2.hour,
+          post_modified_gmt: Time.now,
           post_parent: 0,
           menu_order: 0,
           post_type: 'vendor',

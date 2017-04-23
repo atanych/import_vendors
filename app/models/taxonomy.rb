@@ -3,20 +3,15 @@ class Taxonomy < ApplicationRecord
   has_one :term, foreign_key: :term_id
 
   VENDOR_TYPES = {
-      'tag' => 'vendor_tag',
-      'category' => 'vendor_category',
-      'priority' => 'vendor_priority'
+      'vendor_tags' => 'vendor_tag',
+      'vendor_categories' => 'vendor_category',
+      'vendor_priority' => 'vendor_priority'
   }
 
   def self.build_term(type, name)
     term = Term.create(name: name, slug: name.parameterize)
     tax = Taxonomy.create(term_id: term.term_id, taxonomy: VENDOR_TYPES[type], description: '')
-    trid = Translation.where(language_code: ENV['LANG']).order(trid: :desc).first
-    Translation.create(
-      element_type: "tax_#{tax.taxonomy}",
-      element_id: tax.term_id,
-      language_code: ENV['LANG'],
-      trid: trid.trid + 1
-    )
+    Translation.create_translation("tax_#{VENDOR_TYPES[type]}", tax.term_id)
+    term
   end
 end

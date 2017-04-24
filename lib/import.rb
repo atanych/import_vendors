@@ -19,6 +19,8 @@ class Import
       website: 10
   }
 
+  ADDITIONAL_GEO_FIELDS = ['latitude', 'longitude']
+
   class << self
     def call(path)
       xlsx = Roo::Spreadsheet.open(path, extension: :xlsx)
@@ -28,7 +30,8 @@ class Import
         vendor = self.preset_vendor
         vendor = self.set_main_fields(vendor, row)
         vendor.save
-        vendor = self.create_additional_fields(vendor, row)
+        self.create_additional_fields(vendor, row)
+        self.look_up_coordinates(vendor, row)
       end
     end
 
@@ -47,6 +50,17 @@ class Import
         additional_field_class.(vendor, row[index])
       end
       vendor
+    end
+
+    def look_up_coordinates(vendor, row)
+      city = row[ADDITIONAL_FIELDS[:city]]
+      street = row[ADDITIONAL_FIELDS[:street]]
+      return if city.empty?
+      geo_object = Geokit::Geocoders::GoogleGeocoder.geocode("#{city} #{street}")
+      ADDITIONAL_GEO_FIELDS.each do |field_name|
+        additional_field_class = "AdditionalFields::#{field_name.capitalize}".constantize
+        additional_field_class.(vendor, geo_object.send(field_name))
+      end
     end
 
     def preset_vendor

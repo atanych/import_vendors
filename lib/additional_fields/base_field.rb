@@ -27,7 +27,7 @@ module AdditionalFields
     end
 
     def create_real_row
-      Postmeta.create(post: @vendor, meta_key: field_name, meta_value: @value)
+      Postmeta.create(post: @vendor, meta_key: field_name, meta_value: Sanitize.clean(@value))
     end
 
     def find_or_create_term(term_name)

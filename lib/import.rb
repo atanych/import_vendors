@@ -16,7 +16,8 @@ class Import
       phone: 7,
       contact: 8,
       email: 9,
-      website: 10
+      website: 10,
+      hourly_rate: 12
   }
 
   ADDITIONAL_GEO_FIELDS = ['latitude', 'longitude']
@@ -46,7 +47,7 @@ class Import
 
     def create_additional_fields(vendor, row)
       ADDITIONAL_FIELDS.each do |field_name, index|
-        additional_field_class = "AdditionalFields::#{field_name.capitalize}".constantize
+        additional_field_class = "AdditionalFields::#{field_name.to_s.camelize}".constantize
         additional_field_class.(vendor, row[index])
       end
       vendor
